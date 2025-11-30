@@ -10,6 +10,7 @@ import e from 'express';
 import { mkdir } from 'fs';
 import { destination } from 'pino';
 import { UserModule } from './user/user.module';
+import { User } from './user/user.entity';
 
 
 const environment = process.env.NODE_ENV || 'development';
@@ -74,6 +75,7 @@ const date = new Date().toISOString().split('T')[0];
         database: configService.get<string>('DB_NAME'),
         ssl: configService.get<boolean>('DB_SSL'),
         synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        entities:[User]
       };
     },
   }),
@@ -85,7 +87,7 @@ const date = new Date().toISOString().split('T')[0];
   providers: [AppService],
 })
 export class AppModule {
-  constructor() {
-    console.log(date)
-  }
+  // constructor() {
+  //   console.log(date)
+  // }
 }
