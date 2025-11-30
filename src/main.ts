@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Logger } from 'nestjs-pino';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{
@@ -13,6 +13,19 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true,
     transform: true,
+    exceptionFactory: (errors: ValidationError[]) => {
+        const details = errors.map(e => ({
+          field: e.property,
+          constraints: e.constraints,
+          
+        }));
+         return new BadRequestException({
+            statusCode: 400,
+            error: 'ValidationError',
+            message: 'Validation failed',
+            details,
+         });
+    }
   }))
 
   const config = new DocumentBuilder()
